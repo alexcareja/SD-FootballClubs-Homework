@@ -10,6 +10,7 @@
 
 
 Player *union_teams(FootballClub *clubs, char *club_A, char *club_B) {
+	Player *auxP;
 	FootballClub *club = initialize_clubs(0, NULL);
 	club = add_club(club, "A+B");
 	if(clubs == NULL){
@@ -57,10 +58,14 @@ Player *union_teams(FootballClub *clubs, char *club_A, char *club_B) {
 					aux_players->score);
 		aux_players = aux_players->next;
 	}
-	return club->players;
-}
+	auxP = club->players;
+	free(club->name);
+	free(club);
+	return auxP;
+} 
 
 Player *get_best_player(FootballClub *clubs, char *position) {
+	Player *auxP;
 	FootballClub *aux = clubs;	// variabila de parcurgere a listei
 	Player *aux_player;			// variabila de parcurgere a listei
 	int max_score = -101;		// scorul maxim
@@ -95,8 +100,15 @@ Player *get_best_player(FootballClub *clubs, char *position) {
 	if(club->players == NULL){
 		return NULL;
 	}
-	club->players->next = NULL;
-	return club->players;
+	auxP = club->players;
+	if(auxP->next != NULL){
+		destroy_player_list(auxP->next);
+		auxP->next = NULL;
+	}
+	free(club->name);
+	free(club);
+	//club->players->next = NULL;
+	return auxP;
 }
 
 // Functie care compara jucatorii dupa scor, nume
@@ -128,7 +140,8 @@ void add_best_players(FootballClub *clubs, char *player_name,
 	if(player == NULL){
 		return;
 	}
-	player->name = player_name;
+	player->name = (char *) malloc(sizeof(player_name));
+	strcpy(player->name, player_name);
 	player->position = position;
 	player->score = score;
 	player->injured = injured;
@@ -177,6 +190,7 @@ void add_best_players(FootballClub *clubs, char *player_name,
 }
 
 Player *get_top_players(FootballClub *clubs, int N) {
+	Player *auxP;
 	FootballClub *aux = clubs;	// variabila de parcurgere a listei
 	Player *aux_player;			// variabila de parcurgere a listei
 	int i;						// contor
@@ -184,6 +198,7 @@ Player *get_top_players(FootballClub *clubs, int N) {
 								// jucatori dintr-o echipa
 	FootballClub *best = initialize_clubs(0, NULL);
 	best = add_club(best, "bestest");
+	
 	// Parcurg fiecare club
 	for(; aux != NULL; aux = aux->next){
 		club = initialize_clubs(0, NULL);
@@ -206,11 +221,16 @@ Player *get_top_players(FootballClub *clubs, int N) {
 				break;
 			}
 		}
+		destroy_club_list(club);
 	}
-	return best->players;
+	auxP = best->players;
+	free(best->name);
+	free(best);
+	return auxP;
 }
 
 Player *get_players_by_score(FootballClub *clubs, int score) {
+	Player *auxP;
 	FootballClub *aux = clubs;	// variabila de parcurgere a listei
 	Player *aux_player;			// variabila de parcurgere a listei
 	FootballClub *best = initialize_clubs(0, NULL);
@@ -236,10 +256,14 @@ Player *get_players_by_score(FootballClub *clubs, int score) {
 			aux_player = aux_player->next;
 		}
 	}
-	return best->players;
+	auxP = best->players;
+	free(best->name);
+	free(best);
+	return auxP;
 }
 
 Player *get_players_by_position(FootballClub *clubs, char *position) {
+	Player *auxP;
 	FootballClub *aux = clubs;	// variabila de parcurgere a listei
 	Player *aux_player;			// variabila de parcurgere a listei
 	FootballClub *best = initialize_clubs(0, NULL);
@@ -266,10 +290,14 @@ Player *get_players_by_position(FootballClub *clubs, char *position) {
 			aux_player = aux_player->next;
 		}
 	}
-	return best->players;
+	auxP = best->players;
+	free(best->name);
+	free(best);
+	return auxP;
 }
 
 Player *get_best_team(FootballClub *clubs) {
+	Player *auxP;
 	Player *portari = get_players_by_position(clubs, "portar");
 	Player *fundasi = get_players_by_position(clubs, "fundas");
 	Player *mijlocasi = get_players_by_position(clubs, "mijlocas");
@@ -281,37 +309,44 @@ Player *get_best_team(FootballClub *clubs) {
 		add_best_players(best, portari->name, portari->position, 
 						portari->score, portari->injured);
 	}
-	for(i = 0; i < 4; i++){
+	destroy_player_list(portari);
+	for(auxP = fundasi, i = 0; i < 4; i++){
 		if(fundasi != NULL){
-			add_best_players(best, fundasi->name, fundasi->position, 
-							fundasi->score, fundasi->injured);
-			fundasi = fundasi->next;
+			add_best_players(best, auxP->name, auxP->position, 
+							auxP->score, auxP->injured);
+			auxP = auxP->next;
 		}
 		else{
 			break;
 		}
 	}
-	for(i = 0; i < 3; i++){
+	destroy_player_list(fundasi);
+	for(auxP = mijlocasi, i = 0; i < 3; i++){
 		if(mijlocasi != NULL){
-			add_best_players(best, mijlocasi->name, mijlocasi->position, 
-							mijlocasi->score, mijlocasi->injured);
-			mijlocasi = mijlocasi->next;
+			add_best_players(best, auxP->name, auxP->position, 
+							auxP->score, auxP->injured);
+			auxP = auxP->next;
 		}
 		else{
 			break;
 		}
 	}
-	for(i = 0; i < 3; i++){
+	destroy_player_list(mijlocasi);
+	for(auxP = atacanti, i = 0; i < 3; i++){
 		if(atacanti != NULL){
-			add_best_players(best, atacanti->name, atacanti->position, 
-							atacanti->score, atacanti->injured);
-			atacanti = atacanti->next;
+			add_best_players(best, auxP->name, auxP->position, 
+							auxP->score, auxP->injured);
+			auxP = auxP->next;
 		}
 		else{
 			break;
 		}
 	}
-	return best->players;
+	destroy_player_list(atacanti);
+	auxP = best->players;
+	free(best->name);
+	free(best);
+	return auxP;
 }
 
 #endif // TEAM_EXTRACTOR_H_INCLUDED

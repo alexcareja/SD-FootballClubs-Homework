@@ -61,7 +61,8 @@ FootballClub *initialize_clubs(int clubs_no, char **names) {
 	}
 	int i;	// contor pentru numele respectiv numarul clubului
 	//strcpy(clubs->name, names[0]);
-	clubs->name = names[0];
+	clubs->name = (char *) malloc(sizeof(names[0]));
+	strcpy(clubs->name, names[0]);
 	clubs->players = NULL;
 	clubs->injured_players = NULL;
 	clubs->next = NULL;
@@ -375,6 +376,10 @@ void transfer_player(FootballClub *clubs, char *player_name,
 	}
 	if(new_club == NULL){	/*Cand este NULL transfer a fost apelat din functia
 						remove si nu mai trebuie adaugat la niciun club*/
+		if(aux_player != NULL){
+			free(aux_player->name);
+			free(aux_player);
+		}
 		return;
 	}
 	else{
@@ -386,7 +391,10 @@ void transfer_player(FootballClub *clubs, char *player_name,
 			}
 		}
 	}
-	free(aux_player);
+	if(aux_player != NULL){
+		free(aux_player->name);
+		free(aux_player);
+	}
 }
 
 void remove_player(FootballClub *clubs, char *club_name, char *player_name) {
@@ -456,10 +464,12 @@ void update_game_position(FootballClub *clubs, char *club_name,
 							position, score);
 			}
 			else{
-				// Adaug jucatorul la acleasi club, doar cu scorul actualizat
+			// Adaug jucatorul la acleasi club, doar cu scorul actualizat
 				add_player(clubs, club_name, aux_player->name, 
 							aux_player->position, score);
 			}
+			free(aux_player->name);
+			free(aux_player);
 		}
 	}
 
@@ -510,9 +520,11 @@ void update_game_position(FootballClub *clubs, char *club_name,
 							aux_player->position, score);
 				add_injury(clubs,  club_name, aux_player->name, 0);
 			}
+			free(aux_player->name);
+			free(aux_player);
 		}
 	}
-	free(aux_player);
+	//free(aux_player);
 }
 
 void update_score(FootballClub *clubs, char *club_name, 
@@ -583,30 +595,36 @@ void recover_from_injury(FootballClub *clubs, char *club_name,
 	aux_player->injured = 0;
 	add_player(clubs, club_name, aux_player->name, aux_player->position, 
 				aux_player->score);
-	free(aux_player);
+	if(aux_player != NULL){
+		free(aux_player->name);
+		free(aux_player);
+	}
 }
 
 // Frees memory for a list of Player.
 void destroy_player_list(Player *player) {
-	/*if(player == NULL){
+	Player *aux;
+	if(player == NULL){
 		return;
 	}
-	Player *aux = player->next;
+	aux = player->next;
 	free(player->name);
 	free(player);
-	destroy_player_list(aux);*/
+	destroy_player_list(aux);
 }
 
 // Frees memory for a list of FootballClub.
 void destroy_club_list(FootballClub *clubs) {
-	/*if(clubs == NULL){
+	FootballClub *aux;
+	if(clubs == NULL){
 		return;
 	}
-	FootballClub *aux = clubs->next;
+	aux = clubs->next;
 	destroy_player_list(clubs->players);
 	destroy_player_list(clubs->injured_players);
 	free(clubs->name);
-	destroy_club_list(aux);*/
+	free(clubs);
+	destroy_club_list(aux);
 }
 
 // Displays a list of players.
