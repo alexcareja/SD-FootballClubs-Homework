@@ -25,6 +25,7 @@ typedef struct FootballClub {
 	struct FootballClub *next;	// next list node
 } FootballClub;
 
+// Functie de adaugat cluburi in lista
 FootballClub *add_club(FootballClub *clubs, char *name) {
 	//Declar un club de fotbal si ii completez campurile
 	FootballClub *club = (FootballClub *) malloc(sizeof(FootballClub));
@@ -199,16 +200,13 @@ void add_injury(FootballClub *clubs, char *club_name,
 		aux->players = aux->players->next;
 		aux_player->next = NULL;
 	}
-	else{	// Daca jucatorul nu era primul
+	else{	// Daca jucatorul nu era primul, il caut in lista
 		aux_player = aux->players;
 		while( 1 ){
 			if(aux_player != NULL){
 				if(strcmp(aux_player->name, player_name) == 0){
 					break;
 				}
-				/*if(aux_player != NULL){
-					printf("\n%s - %s \n", aux_player->name, player_name);
-				}*/
 				aux_player = aux_player->next;
 				continue;
 			}
@@ -310,16 +308,13 @@ void transfer_player(FootballClub *clubs, char *player_name,
 			aux->players = aux->players->next;
 			aux_player->next = NULL;
 		}
-		else{	// Daca jucatorul nu era primul
+		else{	// Daca jucatorul nu era primul, il caut in lista
 			aux_player = aux->players;
 			while( 1 ){
 				if(aux_player != NULL){
 					if(strcmp(aux_player->name, player_name) == 0){
 						break;
 					}
-					/*if(aux_player != NULL){
-						printf("\n%s - %s \n", aux_player->name, player_name);
-					}*/
 					aux_player = aux_player->next;
 					continue;
 				}
@@ -351,7 +346,7 @@ void transfer_player(FootballClub *clubs, char *player_name,
 				aux->injured_players = aux->injured_players->next;
 				aux_player->next = NULL;
 			}
-			else{	// Daca jucatorul nu era primul
+			else{	// Daca jucatorul nu era primul, il caut in lista
 				aux_player = aux->injured_players;
 				while( 1 ){
 					if(aux_player != NULL){
@@ -407,7 +402,7 @@ void update_game_position(FootballClub *clubs, char *club_name,
 	if(clubs == NULL){
 		return;
 	}
-	FootballClub *aux = clubs;	// variabila de parcurgere a listei
+	FootballClub *aux = clubs;		// variabila de parcurgere a listei
 	Player *aux_player = NULL;		// variabile in care retin jucatorul
 	// Caut clubul de la care trebuie actualizat jucatorul
 	while(1){
@@ -419,7 +414,6 @@ void update_game_position(FootballClub *clubs, char *club_name,
 		}
 		aux = aux->next;
 	}
-		// injured players !!!
 	if(aux->players != NULL){
 		// Daca lista de jucatori nu e goala
 		// Caut jucatorul care trebuie actualizat si il elimin din lista
@@ -524,7 +518,6 @@ void update_game_position(FootballClub *clubs, char *club_name,
 			free(aux_player);
 		}
 	}
-	//free(aux_player);
 }
 
 void update_score(FootballClub *clubs, char *club_name, 
@@ -573,9 +566,6 @@ void recover_from_injury(FootballClub *clubs, char *club_name,
 				if(strcmp(aux_player->name, player_name) == 0){
 					break;
 				}
-				/*if(aux_player != NULL){
-					printf("\n%s - %s \n", aux_player->name, player_name);
-				}*/
 				aux_player = aux_player->next;
 				continue;
 			}

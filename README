@@ -1,0 +1,127 @@
+****************************** Structuri de Date ******************************
+========================== Tema 1: Echipe de fotbal ===========================
+
+Student: Careja Alexandru-Cristian
+Grupa: 314CD
+
+
+--> FootballClub.h
+
+> add_club(clubs, name) - functie ce adauga un club intr-o lista de cluburi.
+
+> initialize_clubs(clubs_no, names) - creeaza o lista de cluburi si 
+  initializeaza primul club. Pentru urmatoarele cluburi de adaugat apeleaza
+  functia add_club.
+
+> compare_players(player1, player2) - compara playerul 1 cu playerul 2 si 
+  returneaza 1 daca al doilea jucator trebuie pus inaintea primului, zero
+  altfel. Criteriile de comparatie sunt in ordinea: pozitie (alfabetic), scor
+  (descrescator), nume (alfabetic).
+
+> add_player(clubs, club_name, name, position, score) - cauta in lista de
+  cluburi clubul cu numele club_name. Adauga jucatorul la clubul respectiv
+  parcurgand lista de jucatori neaccidentati si comparand jucatorii cu functia
+  compare_players. Functia adauga jucatorul in ordinea ceruta in enuntul temei.
+
+> add_injury(clubs, club_name, name, days) - cauta in lista de  cluburi clubul
+  cu numele club_name. Cauta in lista de jucatori neaccidentati jucatorul cu
+  numele name si daca acesta exista, in scoate din lista (facand si legatura 
+  intre ceilalti jucatori). Daca jucatorul nu este gasit, se iese din functie.
+  Se modifica scorul jucatorului dupa formula precizata si se adauga in lista
+  injured, comparand jucatorii cu functia compare_players.
+
+> transfer_player(clubs, name, new_club, old_club, name) - cauta in lista de 
+  cluburi clubul cu numele old_club. In listele de jucatori cauta jucatorul
+  cu numele name si il scoate din lista (facand si legatura intre ceilalti 
+  jucatori). Daca jucatorul nu este gasit, nu se intampla nimic in continuare.
+  Daca jucatorul este neaccidentat, se adauga la clubul nou cu functia 
+  add_player. Daca jucatorul este accidentat, se adauga la fel, si se apeleaza
+  si add_injury cu days_no = 0, pentru a-l introduce in lista de accidentati,
+  si cu scorul neschimbat. New_club poate fi NULL (pentru remove player), caz
+  in care jucatorul nu mai este adaugat la noul club, si este eliberata memoria
+  alocata pentru jucator.
+
+> remove_player(clubs, club_name, name) - are aceeasi functionalitate ca si 
+  transfer pana la un punct, atunci cand adauga jucatorul la clubul nou. In 
+  functie apelez transfer_player si dau argumentul NULL pentru parametrul 
+  new_club pentru a-l elimina din clubul vechi, si a nu-l adauga la niciun nou
+  club.
+
+> update_game_position(clubs, club_name, name, position, score) - cauta in 
+  lista de cluburi clubul cu numele club_name. Caut jucatorul in lista de 
+  jucatori neaccidentati. Daca il gasesc, il elimin din lista si il adaug
+  folosind add_player cu pozitia si scorul updatate. Parametrul position paote
+  avea valoarea NULL, atunci cand functia este apelata din update_score. Daca
+  jucatorul nu este gasit in lista de neaccidentati, atunci il caut in lista
+  injured. Daca il gasesc, il elimin din lista si il adaug folosind add_player
+  ca mai devreme si add_injury cu days_no = 0. La fel se verifica daca position
+  este egal cu NULL.
+
+> update_score(clubs, club_name, name, score) - are aceeasi functionalitate ca
+  si update_game_position pana la un punct. Singura diferenta este aceea ca nu
+  ii modifica pozitia jucatorului. In functie apelez update_game_position cu
+  argumentul NULL pentru parametrul position, astfel, nu ii modific pozitia, si
+  reusesc sa ii updatez scorul.
+
+> recover_from_injury(clubs, club_name, name) - cauta in lista de cluburi 
+  clubul cu numele club_name. In lista de jucatori accidentati caut jucatorul
+  cu numele name si il elimin (facand si legatura intre ceilalti jucatori), si
+  il adaug la acelasi club, folosind add_player.
+
+> destroy_player_list(pl_list) - elibereaza memoria pentru nume si apoi pentru
+  jucator, si apeleaza recursiv destroy_player_list pentru urmatorul jucator
+  pana cand pl_list = NULL.
+
+> destroy_club_list(club_list) - elibereaza memoria pentru nume, pentru
+  listele de jucatori neaccidentati si jucatori accidentati si apoi pentru
+  club in sine, si apeleaza recursiv destroy_club_list pentru urmatorul club
+  pana cand club_list = NULL.
+
+
+--> TeamExtractor.h
+
+> union_teams(clubs, club_A, club_b) - creez un club nou. Caut clubul A. Adaug
+  jucatorii din a in clubul nou, daca exista jucatorii. La fel si pentru clubul
+  B. Returnez clubul nou
+
+> get_best_player(clubs, position) - parcurg fiecare club, respectiv fiecare 
+  lista de jucatori si caut scorul maxim de pe pozitia primita ca parametru.
+  Parcurg din nou fiecare club si lista de jucatori si adaug intr-o lista toti
+  jucatorii cu scorul maxim gasit mai devreme. Pastrez doar primul jucator (ei
+  fiind sortati alfabetic) si il returnez.
+
+> compare_best_players(player1, player2) - compara playerul 1 cu playerul 2 si 
+  returneaza 1 daca al doilea jucator trebuie pus inaintea primului, zero
+  altfel. Criteriile de comparatie sunt in ordinea: scor (descrescator), nume 
+  (alfabetic).
+
+> add_best_players(club, name, position, score) - adauga jucatorul in lista
+  de jucatori neaccidentati ai clubului dupa ordinea scor, nume, folosind
+  functia compare_best_players.
+
+> get_top_players(clubs, N) - folosesc un club auxiliar in care adaug fiecare
+  jucator din fiecare club, pe rand (cand trec la un club nou, reinitializez
+  clubul auxiliar cu init_clubs(0, NULL)) si extrag cei mai buni N playeri din
+  clubul auxiliar, pe care ii adaug intr-un club care va contine toti jucatorii
+  (cei mai buni N) extrasi din fiecare club. Returnez lista de jucatori a 
+  clubului auxiliar si eliberez memoria pentru cluburi.
+
+> get_players_by_score(clubs, score) - parcurg fiecare lista de jucatori din 
+  fiecare club si adaug intr-o lista auxiliara toti jucatorii cu scorul mai 
+  mare/egal cu score folosind add_best_players. Returnez lista de jucatori a
+  clubului auxiliar si eliberez memoria alocata pentru el.
+
+> get_players_by_position(clubs, position) - parcurg fiecare lista de jucatori
+  din fiecare club si adaug intr-o lista auxiliara toti jucatorii cu pozitia
+  position folosind add_best_players. Returnez lista de jucatori a clubului
+  auxiliar si eliberez memoria alocata pentru el.
+
+> get_best_team(clubs) - folosind get_players_by_position am creat 4 liste de 
+  jucatori, cate una pentru fiecare pozitie de joc. Am extras primul portar si
+  l-am adaugat la un club auxliar folosind add_best_players, primii 4 fundasi,
+  3 mijlocasi si 3 atacanti. Returnez lista de jucatori a clubului auxiliar si
+  eliberez memoria alocata pentru el.
+
+
+
+

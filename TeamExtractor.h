@@ -83,7 +83,6 @@ Player *get_best_player(FootballClub *clubs, char *position) {
 			aux_player = aux_player->next;
 		}
 	}
-	//printf("\n%d\n",max_score);
 	// Caut jucatorii cu scorul maxim si ii adaug intr-o lista
 	for(aux = clubs; aux != NULL; aux = aux->next){
 		aux_player = aux->players;
@@ -130,6 +129,7 @@ int compare_best_players(Player *p1, Player *p2){
 	return 0;
 }
 
+// Functie de adaugat playeri in lista comparati dupa criteriile scor, nume
 void add_best_players(FootballClub *clubs, char *player_name, 
 						char *position, int score, int injured) {
 	if(clubs == NULL){
@@ -223,6 +223,7 @@ Player *get_top_players(FootballClub *clubs, int N) {
 		}
 		destroy_club_list(club);
 	}
+	// Eliberez memorie
 	auxP = best->players;
 	free(best->name);
 	free(best);
@@ -256,6 +257,7 @@ Player *get_players_by_score(FootballClub *clubs, int score) {
 			aux_player = aux_player->next;
 		}
 	}
+	// Eliberez memorie
 	auxP = best->players;
 	free(best->name);
 	free(best);
@@ -290,6 +292,7 @@ Player *get_players_by_position(FootballClub *clubs, char *position) {
 			aux_player = aux_player->next;
 		}
 	}
+	// Eliberez memorie
 	auxP = best->players;
 	free(best->name);
 	free(best);
@@ -297,6 +300,7 @@ Player *get_players_by_position(FootballClub *clubs, char *position) {
 }
 
 Player *get_best_team(FootballClub *clubs) {
+	// Iau cei mai buni playeri de pe fiecare pozitie
 	Player *auxP;
 	Player *portari = get_players_by_position(clubs, "portar");
 	Player *fundasi = get_players_by_position(clubs, "fundas");
@@ -305,11 +309,13 @@ Player *get_best_team(FootballClub *clubs) {
 	FootballClub *best = initialize_clubs(0, NULL);
 	best = add_club(best, "bestest");
 	int i;
+	// Pastrez cel mai bun portar
 	if(portari != NULL){
 		add_best_players(best, portari->name, portari->position, 
 						portari->score, portari->injured);
 	}
 	destroy_player_list(portari);
+	// Pastez cei mai buni 4 fundasi
 	for(auxP = fundasi, i = 0; i < 4; i++){
 		if(fundasi != NULL){
 			add_best_players(best, auxP->name, auxP->position, 
@@ -321,6 +327,7 @@ Player *get_best_team(FootballClub *clubs) {
 		}
 	}
 	destroy_player_list(fundasi);
+	// Pastrez cei mai buni 3 mijlocasi
 	for(auxP = mijlocasi, i = 0; i < 3; i++){
 		if(mijlocasi != NULL){
 			add_best_players(best, auxP->name, auxP->position, 
@@ -331,6 +338,7 @@ Player *get_best_team(FootballClub *clubs) {
 			break;
 		}
 	}
+	// Pastrez cei mai buni 3 atacanti
 	destroy_player_list(mijlocasi);
 	for(auxP = atacanti, i = 0; i < 3; i++){
 		if(atacanti != NULL){
@@ -342,6 +350,7 @@ Player *get_best_team(FootballClub *clubs) {
 			break;
 		}
 	}
+	// Eliberez memorie
 	destroy_player_list(atacanti);
 	auxP = best->players;
 	free(best->name);
